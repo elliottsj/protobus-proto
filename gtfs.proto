@@ -5,7 +5,7 @@
 //
 // Protocol definition file for a GTFS feed.
 
-package com.elliottsj.gtfs;
+package com.elliottsj;
 
 message FeedMessage {
   // Metadata about this feed and feed message.
