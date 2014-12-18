@@ -5,10 +5,7 @@
 //
 // Protocol definition file for a GTFS feed.
 
-syntax = "proto2";
-
-option java_package = "com.google.transit.planned";
-package transit_planned;
+package com.elliottsj.gtfs;
 
 message FeedMessage {
   // Metadata about this feed and feed message.
