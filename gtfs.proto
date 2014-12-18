@@ -5,6 +5,7 @@
 //
 // Protocol definition file for a GTFS feed.
 
+syntax = "proto2";
 package com.elliottsj;
 
 message FeedMessage {
@@ -38,10 +39,13 @@ message FeedHeader {
   // The feed publisher can specify a string here that indicates the current version of their GTFS feed.
   optional string feed_version = 7;
 
+  // Copyright text provided in every NextBus response
+  optional string feed_copyright = 1000;
+
   // The extensions namespace allows 3rd-party developers to extend the
   // GTFS specification in order to add and evaluate new features and
   // modifications to the spec.
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
 
 // A definition (or update) of an entity in the transit feed.
@@ -75,7 +79,7 @@ message FeedEntity {
   optional Frequencies frequencies= 13;
   optional Transfers transfers = 14;
 
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
 
 //
@@ -103,10 +107,16 @@ message Agency {
 
   // The agency_fare_url specifies the URL of a web page that allows a rider to purchase tickets or other fare instruments for that agency online. 
   optional string agency_fare_url = 7;
+
+  // The agency_short_title field contains the short title for a transit agency.
+  optional string agency_short_title = 1000;
+
+  // The agency_region_title field contains the region name for a transit agency.
+  optional string agency_region_title = 1001;
   
   // GTFS specification in order to add and evaluate new features and
   // modifications to the spec.
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
 
 message Stops {
@@ -160,7 +170,7 @@ message Stops {
   // The extensions namespace allows 3rd-party developers to extend the
   // GTFS specification in order to add and evaluate new features and
   // modifications to the spec.
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
 
 message Routes {
@@ -221,7 +231,7 @@ message Routes {
   // The extensions namespace allows 3rd-party developers to extend the
   // GTFS specification in order to add and evaluate new features and
   // modifications to the spec.
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
 
 
@@ -260,7 +270,7 @@ message Trips {
   // The extensions namespace allows 3rd-party developers to extend the
   // GTFS specification in order to add and evaluate new features and
   // modifications to the spec.
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
 
 message StopTimes {
@@ -301,7 +311,7 @@ message StopTimes {
   // The extensions namespace allows 3rd-party developers to extend the
   // GTFS specification in order to add and evaluate new features and
   // modifications to the spec.
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
 
 message Calendar {
@@ -322,7 +332,7 @@ message Calendar {
   // The extensions namespace allows 3rd-party developers to extend the
   // GTFS specification in order to add and evaluate new features and
   // modifications to the spec.
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
 
 message CalendarDates {
@@ -340,7 +350,7 @@ message CalendarDates {
   // The extensions namespace allows 3rd-party developers to extend the
   // GTFS specification in order to add and evaluate new features and
   // modifications to the spec.
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
 
 message FareAttributes {
@@ -367,7 +377,7 @@ message FareAttributes {
   // The extensions namespace allows 3rd-party developers to extend the
   // GTFS specification in order to add and evaluate new features and
   // modifications to the spec.
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
 
 message FareRules {
@@ -379,7 +389,7 @@ message FareRules {
   // The extensions namespace allows 3rd-party developers to extend the
   // GTFS specification in order to add and evaluate new features and
   // modifications to the spec.
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
 
 message Shapes {
@@ -392,7 +402,7 @@ message Shapes {
   // The extensions namespace allows 3rd-party developers to extend the
   // GTFS specification in order to add and evaluate new features and
   // modifications to the spec.
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
 
 message Frequencies {
@@ -408,7 +418,7 @@ message Frequencies {
   // The extensions namespace allows 3rd-party developers to extend the
   // GTFS specification in order to add and evaluate new features and
   // modifications to the spec.
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
 
 message Transfers {
@@ -427,5 +437,5 @@ message Transfers {
   // The extensions namespace allows 3rd-party developers to extend the
   // GTFS specification in order to add and evaluate new features and
   // modifications to the spec.
-  extensions 1000 to 1999;
+  extensions 1100 to 1999;
 }
