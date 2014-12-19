@@ -67,17 +67,17 @@ message FeedEntity {
   // Data about the entity itself. Exactly one of the following fields must be
   // present (unless the entity is being deleted).
   optional Agency agency = 3;
-  optional Stops stops = 4;
-  optional Routes routes = 5;
-  optional Trips trips = 6;
-  optional StopTimes stop_times = 7;
+  optional Stop stop = 4;
+  optional Route route = 5;
+  optional Trip trip = 6;
+  optional StopTime stop_time = 7;
   optional Calendar calendar = 8;
-  optional CalendarDates calendar_dates = 9;
-  optional FareAttributes fare_attributes = 10;
-  optional FareRules fare_rules = 11;
-  optional Shapes shapes = 12;
-  optional Frequencies frequencies= 13;
-  optional Transfers transfers = 14;
+  optional CalendarDate calendar_date = 9;
+  optional FareAttribute fare_attribute = 10;
+  optional FareRule fare_rule = 11;
+  optional Shape shape = 12;
+  optional Frequency frequency = 13;
+  optional Transfer transfer = 14;
 
   extensions 1100 to 1999;
 }
@@ -119,7 +119,7 @@ message Agency {
   extensions 1100 to 1999;
 }
 
-message Stops {
+message Stop {
   // The stop_id field contains an ID that uniquely identifies a stop or station.
   // Multiple routes may use the same stop. stop_id is dataset unique.
   required string stop_id = 1;
@@ -173,7 +173,7 @@ message Stops {
   extensions 1100 to 1999;
 }
 
-message Routes {
+message Route {
   // The route_id field contains an ID that uniquely identifies a route.
   // The route_id is dataset unique.
   required string route_id = 1;
@@ -235,7 +235,7 @@ message Routes {
 }
 
 
-message Trips {
+message Trip {
   // The route_id field contains an ID that uniquely identifies a route.
   required string route_id = 1;
 
@@ -273,7 +273,7 @@ message Trips {
   extensions 1100 to 1999;
 }
 
-message StopTimes {
+message StopTime {
   // The trip_id field contains an ID that identifies a trip. The trip_id is dataset unique.
   required string trip_id = 1;
 
@@ -335,7 +335,7 @@ message Calendar {
   extensions 1100 to 1999;
 }
 
-message CalendarDates {
+message CalendarDate {
   // The trip_id field contains an ID that identifies a trip. The trip_id is dataset unique.
   required string service_id = 1;
 
@@ -353,7 +353,7 @@ message CalendarDates {
   extensions 1100 to 1999;
 }
 
-message FareAttributes {
+message FareAttribute {
   required string fare_id = 1;
   required float price = 2;
   required string currency_type = 3;
@@ -380,7 +380,7 @@ message FareAttributes {
   extensions 1100 to 1999;
 }
 
-message FareRules {
+message FareRule {
   required string fare_id = 1;
   optional string route_id = 2;
   optional string origin_id = 3;
@@ -392,7 +392,7 @@ message FareRules {
   extensions 1100 to 1999;
 }
 
-message Shapes {
+message Shape {
   required string shape_id = 1;
   optional float shape_pt_lat = 2;
   optional float shape_pt_lon = 3;
@@ -405,7 +405,7 @@ message Shapes {
   extensions 1100 to 1999;
 }
 
-message Frequencies {
+message Frequency {
   required string trip_id = 1;
   required string start_time = 2;
   required string end_time = 3;
@@ -421,7 +421,7 @@ message Frequencies {
   extensions 1100 to 1999;
 }
 
-message Transfers {
+message Transfer {
   required string from_stop_id = 1;
   required string to_stop_id = 2;
   enum TransferType {
