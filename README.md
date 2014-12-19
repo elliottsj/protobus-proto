@@ -1,4 +1,4 @@
-gtfs-protobuf
-=============
+protobus-proto
+==============
 
-GTFS Protocol Buffers version for static feeds
+A Protocol Buffer schema for NextBus + GTFS data
