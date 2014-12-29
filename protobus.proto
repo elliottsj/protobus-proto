@@ -114,16 +114,16 @@ message Agency {
 
   message Nextbus {
     // The unique identifier for the transit agency.
-    required string agency_tag = 101;
+    required string agency_tag = 1;
 
     // The full name of the transit agency, as provided by NextBus.
-    required string agency_title = 102;
+    required string agency_title = 2;
 
     // The short title for a transit agency, if available.
-    optional string agency_short_title = 103;
+    optional string agency_short_title = 3;
 
     // The region name for a transit agency.
-    required string agency_region_title = 104;
+    required string agency_region_title = 4;
   }
 
   // GTFS fields
@@ -134,57 +134,132 @@ message Agency {
 }
 
 message Stop {
-  // The stop_id field contains an ID that uniquely identifies a stop or station.
-  // Multiple routes may use the same stop. stop_id is dataset unique.
-  required string stop_id = 1;
 
-  // The stop_code field contains short text or a number that uniquely identifies the stop for passengers.
-  optional string stop_code = 2;
+  message Gtfs {
+    // An ID that uniquely identifies a stop or station.
+    // Multiple routes may use the same stop. stop_id is dataset unique.
+    // Usually matches Nextbus.stop_tag
+    required string stop_id = 1;
 
-  // The stop_name field contains the name of a stop or station.
-  required string stop_name = 3;
+    // Short text or a number that uniquely identifies the stop for passengers.
+    // Usually matches Nextbus.stop_id
+    optional string stop_code = 2;
 
-  // The stop_desc field contains a description of a stop.
-  optional string stop_desc = 4;
+    // The name of a stop or station.
+    // Usually matches Nextbus.stop_title
+    required string stop_name = 3;
 
-  // Degrees North, in the WGS-84 coordinate system.
-  required float latitude = 5;
+    // A description of a stop.
+    optional string stop_desc = 4;
 
-  // Degrees East, in the WGS-84 coordinate system.
-  required float longitude = 6;
+    // The latitude of a stop or station. The field value must be a valid WGS 84 latitude.
+    // Usually matches Nextbus.stop_lat
+    required float stop_lat = 5;
 
-  optional string zone_id = 7;
-  optional string stop_url = 8;
-  enum LocationType {
-    // A location where passengers board or disembark from a transit vehicle.
-    STOP = 0;
+    // The longitude of a stop or station. The field value must be a valid WGS 84 longitude value from -180 to 180.
+    // Usually matches Nextbus.stop_lon
+    required float stop_lon = 6;
 
-    // A physical structure or area that contains one or more stop.
-    STATION= 1;
+    // The fare zone for a stop ID. Zone IDs are required if you want to provide fare information using fare_rules.txt.
+    // If this stop ID represents a station, the zone ID is ignored.
+    optional string zone_id = 7;
+
+    // The URL of a web page about a particular stop.
+    // This should be different from the agency_url and the route_url fields.
+    // The value must be a fully qualified URL that includes http:// or https://,
+    // and any special characters in the URL must be correctly escaped.
+    // See http://www.w3.org/Addressing/URL/4_URI_Recommentations.html
+    // for a description of how to create fully qualified URL values.
+    optional string stop_url = 8;
+
+    enum LocationType {
+      // A location where passengers board or disembark from a transit vehicle.
+      STOP = 0;
+      // A physical structure or area that contains one or more stops.
+      STATION = 1;
+    }
+
+    // Identifies whether this stop ID represents a stop or station.
+    // If no location type is specified, or the location_type is blank, stop IDs are treated as stops.
+    // Stations may have different properties from stops when they are represented on a map or used in trip planning.
+    optional LocationType location_type = 9 [default = STOP];
+
+    // For stops that are physically located inside stations,
+    // the parent_station field identifies the station associated with the stop.
+    // To use this field, stops.txt must also contain a row where this stop ID is assigned location type=1.
+    optional string parent_station = 10;
+
+    // The timezone in which this stop or station is located.
+    // Please refer to Wikipedia List of Timezones for a list of valid values.
+    // If omitted, the stop should be assumed to be located in the timezone specified by agency_timezone in agency.txt.
+
+    // When a stop has a parent station, the stop is considered to be in the timezone specified by the parent
+    // station's stop_timezone value. If the parent has no stop_timezone value,
+    // the stops that belong to that station are assumed to be in the timezone specified by agency_timezone,
+    // even if the stops have their own stop_timezone values. In other words,
+    // if a given stop has a parent_station value, any stop_timezone value specified for that stop must be ignored.
+
+    // Even if stop_timezone values are provided in stops.txt,
+    //the times in stop_times.txt should continue to be specified as time since midnight in the
+    // timezone specified by agency_timezone in agency.txt.
+    // This ensures that the time values in a trip always increase over the course of a trip,
+    // regardless of which timezones the trip crosses.
+    required string stop_timezone = 11;
+
+    enum WheelchairBoarding {
+      // No accessibility information for the stop
+      UNKNOWN = 0;
+
+      // At least some vehicles at this stop can be boarded by a rider in a wheelchair
+      ACCESSIBLE = 1;
+
+      // Wheelchair boarding is not possible at this stop
+      NOT_ACCESSIBLE = 2;
+    }
+
+    // Whether wheelchair boardings are possible from the specified stop or station.
+    optional WheelchairBoarding wheelchair_boarding = 12 [default = UNKNOWN];
   }
-  optional LocationType location_type = 9 [default = STOP];
 
-  optional string parent_station = 10;
-  required string agency_timezone = 11;
+  message Nextbus {
+    // Unique alphanumeric identifier for stop, such as “cp_1321”.
+    // Even if the stop tags appear to usually be numeric they can sometimes contain alphabetical characters.
+    // Therefore the stop tags cannot be used as a number for telephone systems and other such applications.
+    // For larger agencies such as Toronto TTC suffixes "_IB" and “_OB" are included at the end of the stop tag
+    // for the rare situations when an agency has defined only a single stop for both directions
+    // and the stop is not an arrival at the end of the route (in cases of arrivals “_ar” is used).
+    // This means that the stop tag might not always correspond to GTFS or other configuration data.
+    // These suffixes allow duplicate stops to have the identical stopID as the original stop
+    // while preserving both unique stops in the system.
+    // "_IB" represents a duplicated inbound stop, and "_OB" represents a duplicated outbound stop.
+    required string stop_tag = 1;
 
-  enum WheelchairBoarding {
-    // no accessibility information for the stop
-    UNKNOWN = 0;
+    // The name of the stop to displayed in a user interface
+    // Usually matches Gtfs.stop_name
+    required string stop_title = 2;
 
-    // some vehicles at this stop can be boarded by a rider in a wheelchair
-    ACCESSIBLE = 1;
+    // A short version of the stop title
+    optional string stop_short_title = 3;
 
-    // wheelchair boarding is not possible at this stop
-    NOT_ACCESSIBLE = 2;
+    // The latitude of the stop
+    // Usually matches Gtfs.stop_lat
+    required float stop_lat = 4;
+
+    // The longitude of the stop
+    // Usually matches Gtfs.stop_lon
+    required float stop_lon = 5;
+
+    // Short text or a number that uniquely identifies the stop for passengers.
+    // Usually matches Gtfs.stop_code
+    optional string stop_id = 6;
   }
-  // The exact status of the vehicle with respect to the current stop.
-  // Ignored if current_stop_sequence is missing.
-  optional WheelchairBoarding wheelchair_boarding = 12 [default = UNKNOWN];
 
-  // The extensions namespace allows 3rd-party developers to extend the
-  // GTFS specification in order to add and evaluate new features and
-  // modifications to the spec.
-  extensions 1100 to 1999;
+  // GTFS fields
+  optional Gtfs gtfs_fields = 1;
+
+  // NextBus fields
+  optional Nextbus nextbus_fields = 2;
+
 }
 
 message Route {
