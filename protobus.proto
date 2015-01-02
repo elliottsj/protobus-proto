@@ -172,16 +172,15 @@ message Stop {
     // for a description of how to create fully qualified URL values.
     optional string stop_url = 8;
 
+    // Identifies whether this stop ID represents a stop or station.
+    // If no location type is specified, or the location_type is blank, stop IDs are treated as stops.
+    // Stations may have different properties from stops when they are represented on a map or used in trip planning.
     enum LocationType {
       // A location where passengers board or disembark from a transit vehicle.
       STOP = 0;
       // A physical structure or area that contains one or more stops.
       STATION = 1;
     }
-
-    // Identifies whether this stop ID represents a stop or station.
-    // If no location type is specified, or the location_type is blank, stop IDs are treated as stops.
-    // Stations may have different properties from stops when they are represented on a map or used in trip planning.
     optional LocationType location_type = 9 [default = STOP];
 
     // For stops that are physically located inside stations,
@@ -206,6 +205,7 @@ message Stop {
     // regardless of which timezones the trip crosses.
     required string stop_timezone = 11;
 
+    // Whether wheelchair boardings are possible from the specified stop or station.
     enum WheelchairBoarding {
       // No accessibility information for the stop
       UNKNOWN = 0;
@@ -216,8 +216,6 @@ message Stop {
       // Wheelchair boarding is not possible at this stop
       NOT_ACCESSIBLE = 2;
     }
-
-    // Whether wheelchair boardings are possible from the specified stop or station.
     optional WheelchairBoarding wheelchair_boarding = 12 [default = UNKNOWN];
   }
 
@@ -263,103 +261,169 @@ message Stop {
 }
 
 message Route {
-  // The route_id field contains an ID that uniquely identifies a route.
-  // The route_id is dataset unique.
-  required string route_id = 1;
 
-  // The agency_id field defines an agency for the specified route.
-  optional string agency_id = 2;
+  message Gtfs {
+    // An ID that uniquely identifies a route.
+    // The route_id is dataset unique.
+    required string route_id = 1;
 
-  // The route_short_name contains the short name of a route.
-  required string route_short_name = 3;
+    // An agency for the specified route.
+    // Use this field when you are providing data for routes from more than one agency.
+    optional string agency_id = 2;
 
-  // The route_long_name contains the full name of a route.
-  required string route_long_name = 4;
+    // The short name of a route.
+    // This will often be a short, abstract identifier like "32", "100X", or "Green"
+    // that riders use to identify a route, but which doesn't give any indication of what places the route serves.
+    // At least one of route_short_name or route_long_name must be specified, or potentially both if appropriate.
+    // If the route does not have a short name,
+    // please specify a route_long_name and use an empty string as the value for this field.
+    required string route_short_name = 3;
 
-  // The route_desc field contains a description of a route.
-  required string route_desc = 5;
+    // The full name of a route.
+    // This name is generally more descriptive than the route_short_name
+    // and will often include the route's destination or stop.
+    // At least one of route_short_name or route_long_name must be specified, or potentially both if appropriate.
+    // If the route does not have a long name,
+    // please specify a route_short_name and use an empty string as the value for this field.
+    required string route_long_name = 4;
 
-  // The route_type field describes the type of transportation used on a route.
-  enum RouteType {
-    // Tram, Streetcar, Light rail. Any light rail or street level system within a metropolitan area.
-    TRAM = 0;
+    // A description of a route.
+    // Please provide useful, quality information. Do not simply duplicate the name of the route.
+    // For example, "A trains operate between Inwood-207 St, Manhattan and Far Rockaway-Mott Avenue,
+    // Queens at all times. Also from about 6AM until about midnight,
+    // additional A trains operate between Inwood-207 St and Lefferts Boulevard
+    // (trains typically alternate between Lefferts Blvd and Far Rockaway)."
+    required string route_desc = 5;
 
-    // Subway, Metro. Any underground rail system within a metropolitan area.
-    SUBWAY = 1;
+    // The route_type field describes the type of transportation used on a route.
+    enum RouteType {
+      // Tram, Streetcar, Light rail. Any light rail or street level system within a metropolitan area.
+      TRAM = 0;
 
-    // Rail. Used for intercity or long-distance travel.
-    RAIL = 2;
+      // Subway, Metro. Any underground rail system within a metropolitan area.
+      SUBWAY = 1;
 
-    // Bus. Used for short- and long-distance bus routes.
-    BUS = 3;
+      // Rail. Used for intercity or long-distance travel.
+      RAIL = 2;
 
-    // Ferry. Used for short- and long-distance boat service.
-    FERRY = 4;
+      // Bus. Used for short- and long-distance bus routes.
+      BUS = 3;
 
-    // Cable car. Used for street-level cable cars where the cable runs beneath the car.
-    CABLECAR = 5;
+      // Ferry. Used for short- and long-distance boat service.
+      FERRY = 4;
 
-    // Gondola, Suspended cable car. Typically used for aerial cable cars where the car is suspended from the cable.
-    GONDOLA = 6;
+      // Cable car. Used for street-level cable cars where the cable runs beneath the car.
+      CABLECAR = 5;
 
-    // Funicular. Any rail system designed for steep inclines.
-    FUNICULAR = 7;
+      // Gondola, Suspended cable car. Typically used for aerial cable cars where the car is suspended from the cable.
+      GONDOLA = 6;
+
+      // Funicular. Any rail system designed for steep inclines.
+      FUNICULAR = 7;
+    }
+    optional RouteType route_type = 6;
+
+    // The URL of a web page about that particular route. This should be different from the agency_url.
+    // The value must be a fully qualified URL that includes http:// or https://,
+    // and any special characters in the URL must be correctly escaped.
+    // See http://www.w3.org/Addressing/URL/4_URI_Recommentations.html for a description of how to create fully qualified URL values.
+    optional string route_url = 7;
+
+    // In systems that have colors assigned to routes, the route_color field defines a color that corresponds to a route.
+    // The color must be provided as a six-character hexadecimal number, for example, 00FFFF.
+    // If no color is specified, the default route color is white (FFFFFF).
+    optional string route_color = 8;
+
+    // The route_text_color field can be used to specify a legible color to use for text drawn against a background of route_color.
+    optional string route_text_color = 9;
   }
-  optional RouteType route_type = 6;
 
-  // The route_url field contains the URL of a web page about that particular route.
-  optional string route_url = 7;
+  message Nextbus {
+    // TODO: documentation
+    required string route_tag = 1;
+    required string route_title = 2;
+    optional string route_short_title = 3;
+    required string route_color = 4;
+    required string route_text_color = 5;
+    required float route_lat_min = 6;
+    required float route_lat_max = 7;
+    required float route_lon_min = 8;
+    required float route_lon_max = 9;
+  }
 
-  // In systems that have colors assigned to routes, the route_color field defines a color that corresponds to a route.
-  // The color must be provided as a six-character hexadecimal number, for example, 00FFFF.
-  optional string route_color = 8;
+  // GTFS fields
+  optional Gtfs gtfs_fields = 1;
 
-  // The route_text_color field can be used to specify a legible color to use for text drawn against a background of route_color.
-  optional string route_text_color = 9;
+  // NextBus fields
+  optional Nextbus nextbus_fields = 2;
 
-  // The extensions namespace allows 3rd-party developers to extend the
-  // GTFS specification in order to add and evaluate new features and
-  // modifications to the spec.
-  extensions 1100 to 1999;
 }
 
 
 message Trip {
-  // The route_id field contains an ID that uniquely identifies a route.
-  required string route_id = 1;
 
-  // The service_id contains an ID that uniquely identifies a set of dates when service is available for one or more routes.
-  required string service_id = 2;
+  // TODO: document
+  message Gtfs {
+    // The route_id field contains an ID that uniquely identifies a route.
+    required string route_id = 1;
 
-  // The trip_id field contains an ID that identifies a trip. The trip_id is dataset unique.
-  required string trip_id = 3;
+    // The service_id contains an ID that uniquely identifies a set of dates when service is available for one or more routes.
+    required string service_id = 2;
 
-  // The trip_headsign field contains the text that appears on a sign that identifies the trip's destination to passengers.
-  optional string trip_headsign = 4;
+    // The trip_id field contains an ID that identifies a trip. The trip_id is dataset unique.
+    required string trip_id = 3;
 
-  // The trip_short_name field contains the text that appears in schedules and sign boards to identify the trip to passengers.
-  optional string trip_short_name = 5;
+    // The trip_headsign field contains the text that appears on a sign that identifies the trip's destination to passengers.
+    optional string trip_headsign = 4;
 
-  // The direction_id field contains a binary value that indicates the direction of travel for a trip.
-  enum Direction {
-    OUTBOUND = 0;
+    // The trip_short_name field contains the text that appears in schedules and sign boards to identify the trip to passengers.
+    optional string trip_short_name = 5;
 
-    INBOUND = 1;
+    // The direction_id field contains a binary value that indicates the direction of travel for a trip.
+    enum Direction {
+      OUTBOUND = 0;
+      INBOUND = 1;
+    }
+    optional Direction direction_id = 6;
+
+    // The block_id field identifies the block to which the trip belongs.
+    // A block consists of two or more sequential trips made using the same vehicle,
+    // where a passenger can transfer from one trip to the next just by staying in the vehicle.
+    optional string block_id = 7;
+
+    // The shape_id field contains an ID that defines a shape for the trip.
+    optional string shape_id = 8;
+
+    enum WheelchairAccessible {
+      // No accessibility information for the stop
+      WHEELCHAIR_UNKNOWN = 0;
+
+      // At least some vehicles at this stop can be boarded by a rider in a wheelchair
+      WHEELCHAIR_ACCESSIBLE = 1;
+
+      // Wheelchair boarding is not possible at this stop
+      WHEELCHAIR_NOT_ACCESSIBLE = 2;
+    }
+    optional WheelchairAccessible wheelchair_accessible = 9;
+
+    enum BikesAllowed {
+      BIKES_UNKNOWN = 0;
+      BIKES_ALLOWED = 1;
+      BIKES_NOT_ALLOWED = 2;
+    }
+    optional BikesAllowed bikes_allowed = 10;
   }
-  optional Direction direction_id = 6;
 
-  // The block_id field identifies the block to which the trip belongs.
-  // A block consists of two or more sequential trips made using the same vehicle,
-  // where a passenger can transfer from one trip to the next just by staying in the vehicle.
-  optional string block_id = 7;
+  message Nextbus {
 
-  // The shape_id field contains an ID that defines a shape for the trip.
-  optional string shape_id = 8;
+  }
 
-  // The extensions namespace allows 3rd-party developers to extend the
-  // GTFS specification in order to add and evaluate new features and
-  // modifications to the spec.
-  extensions 1100 to 1999;
+  // GTFS fields
+  optional Gtfs gtfs_fields = 1;
+
+  // NextBus fields
+  optional Nextbus nextbus_fields = 2;
+
 }
 
 message StopTime {
