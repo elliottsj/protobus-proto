@@ -9,7 +9,7 @@ message FeedMessage {
   required FeedHeader header = 1;
 
   // Contents of the feed.
-  repeated FeedEntity entity = 2;
+  repeated FeedEntity entities = 2;
 }
 
 /**
